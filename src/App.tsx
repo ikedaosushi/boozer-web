@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useRef} from 'react';
 import { 
   Drawer, Button, Box, Typography, Grid, TextField, Card,
   CardContent
@@ -34,6 +34,9 @@ function App() {
   const classes = useStyles();
   const [size, setSize] = useState(2)
   const [stations, setStations] = useState([])
+  const [map, setMap] = useState(null);
+  const mapContainer = useRef(null);
+
   const { register, handleSubmit, control, errors } = useForm();
   const onSubmit = (data: any) => {
     console.log(data)
