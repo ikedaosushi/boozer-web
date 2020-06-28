@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import { 
   Drawer, Button, Box, Typography, Grid, TextField, Card,
   CardContent
@@ -9,7 +9,7 @@ import { Search, Add, Remove } from '@material-ui/icons';
 import { useForm  } from "react-hook-form";
 import { DevTool } from "react-hook-form-devtools";
 import mapboxgl from 'mapbox-gl';
-mapboxgl.accessToken = 'pk.eyJ1IjoiaWtlZGFvc3VzaGkiLCJhIjoiY2tiejNmN2d3MG43czJycWUyMHBpa2I0ciJ9.02RcSPuZ_sVc00eq13F-aA';
+const REACT_APP_MAPBOX_KEY = 'pk.eyJ1IjoiaWtlZGFvc3VzaGkiLCJhIjoiY2tiejNmN2d3MG43czJycWUyMHBpa2I0ciJ9.02RcSPuZ_sVc00eq13F-aA';
 
 const drawerWidth = 320;
 const useStyles = makeStyles((theme: Theme) =>
@@ -42,6 +42,26 @@ function App() {
     console.log(data)
     setStations(data)
   }
+
+  useEffect(() => {
+    mapboxgl.accessToken = REACT_APP_MAPBOX_KEY;
+    const initializeMap = ({ setMap, mapContainer }) => {
+      const map = new mapboxgl.Map({
+        container: mapContainer.current,
+        style: "mapbox://styles/mapbox/streets-v11", // stylesheet location
+        center: [0, 0],
+        zoom: 5
+      });
+
+      map.on("load", () => {
+        setMap(map);
+        map.resize();
+      });
+    };
+
+    if (!map) initializeMap({ setMap, mapContainer });
+  }, [map]);
+
   return (
     <Box display="flex">
       <DevTool control={control} />
@@ -88,6 +108,7 @@ function App() {
             ))}
           </Grid>
           <Grid item md={6}>
+            <div ref={el => (mapContainer.current = el)} style={styles} />;
           </Grid>
         </Grid>
       </Box>
