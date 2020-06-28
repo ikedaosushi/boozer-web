@@ -27,6 +27,9 @@ const useStyles = makeStyles((theme: Theme) =>
       flexGrow: 1,
       padding: theme.spacing(3),
     },
+    mapContainer: {
+      height: "calc(100vh - 80px)",
+    }
   }),
 );
 
@@ -45,18 +48,21 @@ function App() {
 
   useEffect(() => {
     mapboxgl.accessToken = REACT_APP_MAPBOX_KEY;
-    const initializeMap = ({ setMap, mapContainer }) => {
+    const initializeMap = ({ setMap, mapContainer }: any) => {
       const map = new mapboxgl.Map({
         container: mapContainer.current,
         style: "mapbox://styles/mapbox/streets-v11", // stylesheet location
-        center: [0, 0],
-        zoom: 5
+        center: [139.7017112,35.659884],
+        zoom: 15
       });
 
       map.on("load", () => {
         setMap(map);
         map.resize();
       });
+      map.on("move", () => {
+        // const { lng, lat } = map.getCenter();
+      })
     };
 
     if (!map) initializeMap({ setMap, mapContainer });
@@ -108,7 +114,9 @@ function App() {
             ))}
           </Grid>
           <Grid item md={6}>
-            <div ref={el => (mapContainer.current = el)} style={styles} />;
+            <Box px={2}>
+              <div ref={el => (mapContainer.current = el)} style={{height: "calc(100vh)"}} />;
+            </Box>
           </Grid>
         </Grid>
       </Box>
