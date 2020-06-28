@@ -5,11 +5,11 @@ import {
 } from '@material-ui/core';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import { Rating } from '@material-ui/lab';
-import { Search, Add, Remove } from '@material-ui/icons';
+import { Search, Add, Remove, Place } from '@material-ui/icons';
 import { useForm  } from "react-hook-form";
 import { DevTool } from "react-hook-form-devtools";
-import mapboxgl from 'mapbox-gl';
-const REACT_APP_MAPBOX_KEY = 'pk.eyJ1IjoiaWtlZGFvc3VzaGkiLCJhIjoiY2tiejNmN2d3MG43czJycWUyMHBpa2I0ciJ9.02RcSPuZ_sVc00eq13F-aA';
+import MapGL, {Marker} from 'react-map-gl';
+const MAPBOX_KEY = 'pk.eyJ1IjoiaWtlZGFvc3VzaGkiLCJhIjoiY2tiejNmN2d3MG43czJycWUyMHBpa2I0ciJ9.02RcSPuZ_sVc00eq13F-aA';
 
 const drawerWidth = 320;
 const useStyles = makeStyles((theme: Theme) =>
@@ -39,39 +39,17 @@ function App() {
   const [stations, setStations] = useState([])
   const [map, setMap] = useState(null);
   const mapContainer = useRef(null);
+  const [viewport, setViewpoirt] = useState({
+    latitude: 35.659884,
+    longitude: 139.7017112,
+    zoom: 15 
+  })
 
   const { register, handleSubmit, control, errors } = useForm();
   const onSubmit = (data: any) => {
     console.log(data)
     setStations(data)
   }
-
-  useEffect(() => {
-    mapboxgl.accessToken = REACT_APP_MAPBOX_KEY;
-    const initializeMap = ({ setMap, mapContainer }: any) => {
-      const map = new mapboxgl.Map({
-        container: mapContainer.current,
-        style: "mapbox://styles/mapbox/streets-v11", // stylesheet location
-        center: [139.7017112,35.659884],
-        zoom: 15
-      });
-
-      map.on("load", () => {
-        setMap(map);
-        map.resize();
-      });
-      map.on("move", () => {
-        // const { lng, lat } = map.getCenter();
-      })
-      var el = document.createElement('div');
-      el.className = 'marker';
-      new mapboxgl.Marker(el)
-        .setLngLat([139.6916908, 35.7015318])
-        .addTo(map);
-    };
-
-    if (!map) initializeMap({ setMap, mapContainer });
-  }, [map]);
 
   return (
     <Box display="flex">
@@ -120,7 +98,16 @@ function App() {
           </Grid>
           <Grid item md={6}>
             <Box px={2}>
-              <div ref={el => (mapContainer.current = el)} style={{height: "calc(100vh)"}} />;
+              <MapGL 
+                width="100%"
+                height="100vh"
+                {...viewport}
+                mapStyle="mapbox://styles/mapbox/streets-v11"
+                mapboxApiAccessToken={MAPBOX_KEY}
+              >
+                <Marker {...viewport}> <Place fontSize="large" color="primary" /> </Marker>
+
+              </MapGL>
             </Box>
           </Grid>
         </Grid>

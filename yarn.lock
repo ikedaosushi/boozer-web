@@ -1527,6 +1527,14 @@
     prop-types "^15.7.2"
     react-is "^16.8.0"
 
+"@math.gl/web-mercator@^3.1.3":
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/@math.gl/web-mercator/-/web-mercator-3.2.1.tgz#f90f1cc29795b0a36dabcc3ecc17b0ca15e97e5d"
+  integrity sha512-D7h5jMTtKOqnto3GtqgKn9Pkblz62G5hZzsk8YIcais8d42MnBTXJbiRf0Fz5wliVYeHIkPpFQWscltKaAomhg==
+  dependencies:
+    "@babel/runtime" "^7.0.0"
+    gl-matrix "^3.0.0"
+
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/@mrmlnc/readdir-enhanced/-/readdir-enhanced-2.2.1.tgz#524af240d1a360527b730475ecfa1344aa540dde"
@@ -5119,7 +5127,7 @@ getpass@^0.1.1:
   dependencies:
     assert-plus "^1.0.0"
 
-gl-matrix@^3.2.1:
+gl-matrix@^3.0.0, gl-matrix@^3.2.1:
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/gl-matrix/-/gl-matrix-3.3.0.tgz#232eef60b1c8b30a28cbbe75b2caf6c48fd6358b"
   integrity sha512-COb7LDz+SXaHtl/h4LeaFcNdJdAQSDeVqjiIihSXNrkWObZLhDI4hIkZC11Aeqp7bcE72clzB0BnDXr2SmslRA==
@@ -5230,6 +5238,11 @@ gzip-size@5.1.1:
   dependencies:
     duplexer "^0.1.1"
     pify "^4.0.1"
+
+hammerjs@^2.0.8:
+  version "2.0.8"
+  resolved "https://registry.yarnpkg.com/hammerjs/-/hammerjs-2.0.8.tgz#04ef77862cff2bb79d30f7692095930222bf60f1"
+  integrity sha1-BO93hiz/K7edMPdpIJWTAiK/YPE=
 
 handle-thing@^2.0.0:
   version "2.0.0"
@@ -7044,7 +7057,7 @@ map-visit@^1.0.0:
   dependencies:
     object-visit "^1.0.0"
 
-mapbox-gl@^1.11.0:
+mapbox-gl@^1.0.0, mapbox-gl@^1.11.0:
   version "1.11.0"
   resolved "https://registry.yarnpkg.com/mapbox-gl/-/mapbox-gl-1.11.0.tgz#7056d7cc1693e157eb5c2beb1476d620670d65e9"
   integrity sha512-opIQf3C5RoKU5r9bHttTMhGAPcJet1/Cj2mdP7Ma2ylrAHjNPRc1i7KPyq8wjEZdJBMhd5qkIDlzUPM0TSncCQ==
@@ -7306,6 +7319,14 @@ mixin-object@^2.0.1:
   dependencies:
     for-in "^0.1.3"
     is-extendable "^0.1.1"
+
+mjolnir.js@^2.4.0:
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/mjolnir.js/-/mjolnir.js-2.4.1.tgz#63cc66b7d1a52490904103cc1becc597be60c6cf"
+  integrity sha512-bpqKc70aNlijeQCapJ8529EmjVj8VSfYdzh1WsbhWp0XEQSm9hAB6X350OyRVDpH5oTdAyX/NeYFqtwyuO4ZKA==
+  dependencies:
+    "@babel/runtime" "^7.0.0"
+    hammerjs "^2.0.8"
 
 mkdirp@0.5.1:
   version "0.5.1"
@@ -9139,6 +9160,18 @@ react-is@^16.12.0, react-is@^16.7.0, react-is@^16.8.0, react-is@^16.8.1, react-i
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
 
+react-map-gl@^5.2.7:
+  version "5.2.7"
+  resolved "https://registry.yarnpkg.com/react-map-gl/-/react-map-gl-5.2.7.tgz#a3d6eda15ee8abb87b9acd855a0f6996cc364188"
+  integrity sha512-nwn/ThhZzlFB5SHzCbKjW2WKhrH9y3uq92PvTQSTIkaZf3eHgfOM4wsRUXR2UncFY8fAdm1ymdYHUwZUqx/2SQ==
+  dependencies:
+    "@babel/runtime" "^7.0.0"
+    mapbox-gl "^1.0.0"
+    mjolnir.js "^2.4.0"
+    prop-types "^15.7.2"
+    react-virtualized-auto-sizer "^1.0.2"
+    viewport-mercator-project "^6.2.3 || ^7.0.1"
+
 react-scripts@3.4.1:
   version "3.4.1"
   resolved "https://registry.yarnpkg.com/react-scripts/-/react-scripts-3.4.1.tgz#f551298b5c71985cc491b9acf3c8e8c0ae3ada0a"
@@ -9213,6 +9246,11 @@ react-transition-group@^4.4.0:
     dom-helpers "^5.0.1"
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
+
+react-virtualized-auto-sizer@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/react-virtualized-auto-sizer/-/react-virtualized-auto-sizer-1.0.2.tgz#a61dd4f756458bbf63bd895a92379f9b70f803bd"
+  integrity sha512-MYXhTY1BZpdJFjUovvYHVBmkq79szK/k7V3MO+36gJkWGkrXKtyr4vCPtpphaTLRAdDNoYEYFZWE8LjN+PIHNg==
 
 react@^16.13.1:
   version "16.13.1"
@@ -10923,6 +10961,13 @@ verror@1.10.0:
     assert-plus "^1.0.0"
     core-util-is "1.0.2"
     extsprintf "^1.2.0"
+
+"viewport-mercator-project@^6.2.3 || ^7.0.1":
+  version "7.0.1"
+  resolved "https://registry.yarnpkg.com/viewport-mercator-project/-/viewport-mercator-project-7.0.1.tgz#9d7248072f2cbb122f93b63d2b346a5763b8d79a"
+  integrity sha512-WKTuTL7o6WKdPQ+gmZhlXL7UpSdCdPUjxkDTBd/3AayBdAFSQGHxsqdbmPBvmoGwvo9KWo/30HTkNo/Z7ORJpw==
+  dependencies:
+    "@math.gl/web-mercator" "^3.1.3"
 
 vm-browserify@^1.0.1:
   version "1.1.2"
