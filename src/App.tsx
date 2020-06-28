@@ -7,7 +7,7 @@ import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import { Rating } from '@material-ui/lab';
 import { Search, Add, Remove, Place } from '@material-ui/icons';
 import { useForm  } from "react-hook-form";
-import { DevTool } from "react-hook-form-devtools";
+// import { DevTool } from "react-hook-form-devtools";
 import MapGL, {Marker} from 'react-map-gl';
 const MAPBOX_KEY = 'pk.eyJ1IjoiaWtlZGFvc3VzaGkiLCJhIjoiY2tiejNmN2d3MG43czJycWUyMHBpa2I0ciJ9.02RcSPuZ_sVc00eq13F-aA';
 
@@ -53,7 +53,7 @@ function App() {
 
   return (
     <Box display="flex">
-      <DevTool control={control} />
+      {/* <DevTool control={control} /> */}
       <Drawer variant="persistent" anchor="left" open={true} className={classes.drawer} classes={{paper: classes.drawerPaper}}>
         <Box textAlign="center" px={6} py={4}>
           <Typography component="h1" variant="h5">複数駅からお店検索</Typography>
