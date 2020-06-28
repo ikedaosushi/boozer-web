@@ -63,6 +63,11 @@ function App() {
       map.on("move", () => {
         // const { lng, lat } = map.getCenter();
       })
+      var el = document.createElement('div');
+      el.className = 'marker';
+      new mapboxgl.Marker(el)
+        .setLngLat([139.6916908, 35.7015318])
+        .addTo(map);
     };
 
     if (!map) initializeMap({ setMap, mapContainer });
