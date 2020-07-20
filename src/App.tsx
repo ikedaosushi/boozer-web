@@ -1,7 +1,7 @@
 import React, {useState, useCallback, useEffect} from 'react';
 import {
   Drawer, Button, Box, Typography, Grid, TextField, Card,
-  CardContent 
+  CardContent, Dialog, DialogTitle 
 } from '@material-ui/core';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import { Rating, Autocomplete } from '@material-ui/lab';
@@ -11,7 +11,7 @@ import { useForm  } from "react-hook-form";
 // import { DevTool } from "react-hook-form-devtools";
 import ReactMapGL, {Marker} from 'react-map-gl';
 const MAPBOX_KEY = 'pk.eyJ1IjoiaWtlZGFvc3VzaGkiLCJhIjoiY2tiejNmN2d3MG43czJycWUyMHBpa2I0ciJ9.02RcSPuZ_sVc00eq13F-aA';
-const API_URL_BASE = "http://localhost:8000"
+const API_URL_BASE = "http://127.0.0.1:8000"
 
 const drawerWidth = 320;
 const useStyles = makeStyles((theme: Theme) =>
@@ -42,11 +42,33 @@ interface Viewport {
   zoom?: number
 }
 
-interface Station {
+interface StationMaster {
   station_id: number,
   station_name: string,
   lon: number,
-  lat: number
+  lat: number,
+}
+
+
+interface CandidateStation {
+  station_id: number,
+  station_name: string,
+  lon: number,
+  lat: number,
+  num_shop: number,
+  top10_avarage_score: number
+}
+
+interface StationTime {
+  station_id: number,
+  station_name: string,
+  time: 9
+}
+
+interface ElectionResult {
+  candidate_station: CandidateStation,
+  indicater: number,
+  station_times: Array<StationTime>
 }
 
 interface Marker {
@@ -60,43 +82,80 @@ const defaultViewport: Viewport = {
     zoom: 15 
 }
 
+export interface SubmitDialogProps {
+  open: boolean,
+  onClose: () => void
+}
+
+function SubmitDialog(props: SubmitDialogProps) {
+  const { open, onClose } = props;
+  return (
+    <Dialog onClose={onClose}  aria-labelledby="simple-dialog-title" open={open}>
+      <DialogTitle id="simple-dialog-title">駅を2つ選んでください</DialogTitle>
+    </Dialog>
+  );
+}
+
 function App() {
   const classes = useStyles();
-  const [stationMaster, setStationMaster] = useState<Array<Station>>([])
+  const [masterStations, setMasterStations] = useState<Array<StationMaster>>([])
+  const [depStations, setDepStations] = useState<Array<StationMaster>>([])
+  const [candStations, setCandStations] = useState<Array<ElectionResult>>([])
   const [size, setSize] = useState<number>(2)
-  const [stations, setStations] = useState<Array<Station>>([])
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [viewport, setViewpoirt] = useState<Viewport>(defaultViewport)
 
   const { register, handleSubmit } = useForm();
+
+  const getCandidateStations = async () => {
+    // station_id=22828&station_id=22715
+    let url  = new URL(API_URL_BASE + "/api/v1/election")
+    const params = [['station_id', "22828"], ['station_id', "22715"]]
+    url.search = new URLSearchParams(params).toString();
+    const res = await fetch(url.toString())
+    const data = await res.json()
+    console.log(data)
+    setCandStations(data.results)
+  };
+
   const onSubmit = (data) => {
-    const submitStations: Array<string> = data.station
-    const stations = submitStations.flatMap(
-      stationName => stationMaster.find(master => master.station_name === stationName))
-    setStations(stations)
+    // const submitStations: Array<string> = data.station
+    // const stations = submitStations.flatMap(
+    //   stationName => stationMaster.find(master => master.station_name === stationName))
+    // setDepStations(stations)
+    setDialogOpen(true)
+    getCandidateStations()
   }
+
+  const handleClose = () => {
+    setDialogOpen(false);
+  };
+
 
   const getStationMaster = useCallback( async () => {
     const res = await fetch(API_URL_BASE + "/api/v1/stations")
     const data = await res.json()
-    setStationMaster(data["results"])
+    setMasterStations(data["results"])
   }, [])
+
   useEffect(() => {
     getStationMaster()
   }, [getStationMaster])
 
   useEffect(() => {
-    const n = stations.length
+    const n = depStations.length
     if(n < 1) return
     const newViewport = {
-      latitude: stations.reduce((total, current) => total + current.lat, 0) / n,
-      longitude: stations.reduce((total, current) => total + current.lon, 0) / n,
+      latitude: depStations.reduce((total, current) => total + current.lat, 0) / n,
+      longitude: depStations.reduce((total, current) => total + current.lon, 0) / n,
       zoom: 12 
     }
     setViewpoirt(newViewport)
-  }, [stations])
+  }, [depStations])
 
   return (
     <Box display="flex">
+      <SubmitDialog onClose={handleClose} open={dialogOpen} ></SubmitDialog>
       {/* <DevTool control={control} /> */}
       <Drawer variant="persistent" anchor="left" open={true} className={classes.drawer} classes={{paper: classes.drawerPaper}}>
         <Box textAlign="center" px={6} py={4}>
@@ -108,7 +167,7 @@ function App() {
             {[...Array(size).keys()].map(idx => (
               <Box key={idx} py={1}>
                 <Autocomplete
-                  options={stationMaster}
+                  options={masterStations}
                   freeSolo
                   autoComplete
                   autoSelect
@@ -133,15 +192,46 @@ function App() {
         <Grid container>
           <Grid item md={6}>
           <Box textAlign="center"> <Typography variant="h5" component="h1"> 検索結果 </Typography> </Box>
-            {[...Array(5).keys()].map(idx => (
-              <Box key={idx} py={1}><Card variant="outlined"><CardContent>
+          {(candStations.length === 0) &&  (
+            <Box textAlign="center" py={3}><Typography variant="h6">駅を入力して検索してください</Typography></Box>
+          )}
+          {(candStations.length > 0) && candStations.map(station => 
+              (<Box py={1} key={station.candidate_station.station_id}>
+                <Card variant="outlined">
+                  <CardContent>
+                  <Grid container>
+                    <Grid item md={6}>
+                      <Typography variant="h6">{station.candidate_station.station_name}</Typography>
+                      <Box py={1} display="flex" flexDirection="column">
+                      <Box py={0.5}><Typography variant="body2">店舗数: {station.candidate_station.num_shop}</Typography></Box>
+                        <Box py={0.5} display="flex" alignItems="center">
+                          <Box><Typography variant="body2">上位10件の平均評価: {station.candidate_station.top10_avarage_score.toFixed(2)}</Typography></Box>
+                          {/* <Rating size="small" value={station.candidate_station.top10_avarage_score} readOnly precision={0.01} /> */}
+                        </Box>
+                      </Box>
+                    </Grid>
+                    <Grid item md={6}>
+                      {station.station_times.map(stationTime => (
+                        <Box key={stationTime.station_id} py={1}>
+                          <Typography variant="body2"> {stationTime.station_name} からの時間: {stationTime.time}分 </Typography>
+                        </Box>
+                      ))}
+                    </Grid>
+                  </Grid>
+                </CardContent>
+                </Card>
+              </Box>)
+           ) } 
+          {/* {[...Array(5).keys()].map(idx => (
+              <Box key={idx} py={1}><Card variant="outlined">
+                <CardContent>
                 <Grid container>
                   <Grid item md={6}>
                     <Typography variant="h6">渋谷駅</Typography>
                     <Box py={1} display="flex" flexDirection="column">
                       <Box py={0.5}><Typography variant="body2">店舗数: 100~</Typography></Box>
                       <Box py={0.5} display="flex" alignItems="center">
-                        <Box><Typography variant="body2">上位100件の平均評価:  </Typography></Box>
+                        <Box><Typography variant="body2">上位10件の平均評価:  </Typography></Box>
                         <Rating size="small" value={3.7} readOnly precision={0.1} />
                       </Box>
                     </Box>
@@ -152,12 +242,14 @@ function App() {
                     ))}
                   </Grid>
                 </Grid>
-              </CardContent></Card> </Box>
-            ))}
+              </CardContent>
+              </Card> 
+              </Box>
+            ))} */ }
           </Grid>
           <Grid item md={6}>
             <Box px={2}>
-              <ReactMapGL 
+              {/* <ReactMapGL 
                 width="100%"
                 height="100vh"
                 {...viewport}
@@ -166,7 +258,7 @@ function App() {
               >
                 {stations.map(station=> (
                   <Marker key={station.station_id} longitude={station.lon} latitude={station.lat}> <Place fontSize="large" color="secondary" /></Marker>))}
-              </ReactMapGL>
+              </ReactMapGL> */}
             </Box>
           </Grid>
         </Grid>
