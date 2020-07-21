@@ -83,15 +83,17 @@ const defaultViewport: Viewport = {
 }
 
 export interface SubmitDialogProps {
+  message: string,
   open: boolean,
   onClose: () => void
 }
 
 function SubmitDialog(props: SubmitDialogProps) {
-  const { open, onClose } = props;
+  const { open, onClose, message } = props;
   return (
-    <Dialog onClose={onClose}  aria-labelledby="simple-dialog-title" open={open}>
-      <DialogTitle id="simple-dialog-title">駅を2つ選んでください</DialogTitle>
+    <Dialog onClose={onClose} open={open}>
+      <DialogTitle>{message}</DialogTitle>
+      <Button onClick={onClose}>閉じる</Button>
     </Dialog>
   );
 }
@@ -102,33 +104,39 @@ function App() {
   const [depStations, setDepStations] = useState<Array<StationMaster>>([])
   const [candStations, setCandStations] = useState<Array<ElectionResult>>([])
   const [size, setSize] = useState<number>(2)
-  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+  const [dialogMessage, setDialogMessage] = useState<string>(null);
   const [viewport, setViewpoirt] = useState<Viewport>(defaultViewport)
 
   const { register, handleSubmit } = useForm();
 
-  const getCandidateStations = async () => {
-    // station_id=22828&station_id=22715
+  const getCandidateStations = async (stations) => {
     let url  = new URL(API_URL_BASE + "/api/v1/election")
-    const params = [['station_id', "22828"], ['station_id', "22715"]]
+    const params = stations.map(station => ["station_id", station.station_id])
     url.search = new URLSearchParams(params).toString();
-    const res = await fetch(url.toString())
-    const data = await res.json()
-    console.log(data)
-    setCandStations(data.results)
+    console.debug(url.toString())
+    try {
+      const res = await fetch(url.toString())
+      const data = await res.json()
+      console.log(data)
+      setCandStations(data.results)
+    } catch (error) {
+      setDialogMessage("申し訳ありません。エラーが発生しました。")
+    }
   };
 
   const onSubmit = (data) => {
-    // const submitStations: Array<string> = data.station
-    // const stations = submitStations.flatMap(
-    //   stationName => stationMaster.find(master => master.station_name === stationName))
+    const submitStations: Array<string> = data.station
+    const stations = submitStations.flatMap(
+      stationName => masterStations.find(master => master.station_name === stationName)
+    ).filter(x => !!x)
     // setDepStations(stations)
-    setDialogOpen(true)
-    getCandidateStations()
+    console.log(stations)
+    if(stations.length < 2) setDialogMessage("2つ以上の駅を選択してください")
+    getCandidateStations(stations)
   }
 
   const handleClose = () => {
-    setDialogOpen(false);
+    setDialogMessage(null);
   };
 
 
@@ -155,7 +163,7 @@ function App() {
 
   return (
     <Box display="flex">
-      <SubmitDialog onClose={handleClose} open={dialogOpen} ></SubmitDialog>
+      <SubmitDialog message={dialogMessage} onClose={handleClose} open={!!dialogMessage} ></SubmitDialog>
       {/* <DevTool control={control} /> */}
       <Drawer variant="persistent" anchor="left" open={true} className={classes.drawer} classes={{paper: classes.drawerPaper}}>
         <Box textAlign="center" px={6} py={4}>
