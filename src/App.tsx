@@ -129,8 +129,7 @@ function App() {
     const stations = submitStations.flatMap(
       stationName => masterStations.find(master => master.station_name === stationName)
     ).filter(x => !!x)
-    // setDepStations(stations)
-    console.log(stations)
+    setDepStations(stations)
     if(stations.length < 2) setDialogMessage("2つ以上の駅を選択してください")
     getCandidateStations(stations)
   }
@@ -230,43 +229,19 @@ function App() {
                 </Card>
               </Box>)
            ) } 
-          {/* {[...Array(5).keys()].map(idx => (
-              <Box key={idx} py={1}><Card variant="outlined">
-                <CardContent>
-                <Grid container>
-                  <Grid item md={6}>
-                    <Typography variant="h6">渋谷駅</Typography>
-                    <Box py={1} display="flex" flexDirection="column">
-                      <Box py={0.5}><Typography variant="body2">店舗数: 100~</Typography></Box>
-                      <Box py={0.5} display="flex" alignItems="center">
-                        <Box><Typography variant="body2">上位10件の平均評価:  </Typography></Box>
-                        <Rating size="small" value={3.7} readOnly precision={0.1} />
-                      </Box>
-                    </Box>
-                  </Grid>
-                  <Grid item md={6}>
-                    {[...Array(size).keys()].map(idx => (
-                      <Typography key={idx} variant="body2"> 駅{idx} からの時間: xx分 </Typography>
-                    ))}
-                  </Grid>
-                </Grid>
-              </CardContent>
-              </Card> 
-              </Box>
-            ))} */ }
           </Grid>
           <Grid item md={6}>
             <Box px={2}>
-              {/* <ReactMapGL 
+              <ReactMapGL 
                 width="100%"
                 height="100vh"
                 {...viewport}
                 mapStyle="mapbox://styles/mapbox/streets-v11"
                 mapboxApiAccessToken={MAPBOX_KEY}
               >
-                {stations.map(station=> (
+                {depStations.map(station=> (
                   <Marker key={station.station_id} longitude={station.lon} latitude={station.lat}> <Place fontSize="large" color="secondary" /></Marker>))}
-              </ReactMapGL> */}
+              </ReactMapGL>
             </Box>
           </Grid>
         </Grid>
